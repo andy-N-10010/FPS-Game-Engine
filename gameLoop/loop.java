@@ -14,17 +14,18 @@ public class loop {
 
             //update as often as possible
             if (timeForUpdatingPhysics()) {
-                G.updateGameState(I);
+                g.updateGameState(I);
             }
             // Use to update health, ammo, used abilities, etc
-            updateStatistics();  
+            g.updateStatistics();  
+            
             // 30 or 60 fps
             if (timeForRendering()) {
-                G.render();
+                g.render();
             }
             FPScontrol();
         }
-        delete G;
+        //delete g; is not necessary in Java
     }
 
     
