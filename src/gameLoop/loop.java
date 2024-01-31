@@ -10,7 +10,7 @@ public class loop {
     }
 
     public void timeForUpdatingPhysics(){
-        int currentTime = ;
+        int currentTime = 0;
         int redrawingPeriod = 20;
         int maxFrameSkip = 10;
         boolean needToRedraw = true;
@@ -19,7 +19,7 @@ public class loop {
     }
     
     public static void main(String[] args) {
-
+    /*
         gameEngine g = new gameState.gameEngine();
         while (!quit) {
             pollForOSMessages();
@@ -39,6 +39,8 @@ public class loop {
             FPScontrol();
         }
         //delete g; is not necessary in Java
+        */
+        System.out.println("Hello World!");
     }
 
     
