@@ -1,7 +1,7 @@
 package collision;
 
-import org.ode4j.*;
+import org.ode4j.math.DMatrixN;
 
 public class collision {
-    
+
 }
