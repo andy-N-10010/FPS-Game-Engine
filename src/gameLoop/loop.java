@@ -1,5 +1,7 @@
 package gameLoop;
-import gameState.*;
+
+import gameState.gameEngine;
+
 /**
  * loop
  */
@@ -9,16 +11,42 @@ public class loop {
         //get player input 
     }
 
-    public void timeForUpdatingPhysics(){
+    public boolean timeForUpdatingPhysics(){
         int currentTime = 0;
         int redrawingPeriod = 20;
         int maxFrameSkip = 10;
         boolean needToRedraw = true;
 
         // check if it is time to update
+        return needToRedraw;
+    }
+
+    public void updatePhysics(){
+        // Takes in input from I = getInput();
     }
     
     public static void main(String[] args) {
+
+        loop gameLoop = new loop();
+
+        gameEngine g = new gameState.gameEngine();
+
+        boolean quit = false;
+
+
+        while (!quit) {
+
+
+            if (gameLoop.timeForUpdatingPhysics()) {
+
+                gameLoop.updatePhysics();
+
+            }
+            //updateStatistics();
+        }
+
+
+
     /*
         gameEngine g = new gameState.gameEngine();
         while (!quit) {
