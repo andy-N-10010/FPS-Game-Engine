@@ -21,9 +21,17 @@ public class loop {
         return needToRedraw;
     }
 
-    public void updatePhysics(){
-        // Takes in input from I = getInput();
+    private void updateStatistics() {
     }
+
+    private boolean timeForRendering() {
+
+        return true;
+    }
+
+    private void FPScontrol() {
+    }
+
     
     public static void main(String[] args) {
 
@@ -39,10 +47,23 @@ public class loop {
 
             if (gameLoop.timeForUpdatingPhysics()) {
 
-                gameLoop.updatePhysics();
+                g.updatePhysics();
+
+                //gameLoop.updatePhysics();
 
             }
-            //updateStatistics();
+            gameLoop.updateStatistics();
+
+            if (gameLoop.timeForRendering()){
+
+                g.render();
+
+
+            }
+
+            gameLoop.FPScontrol();
+
+            quit = true;
         }
 
 
@@ -71,5 +92,5 @@ public class loop {
         System.out.println("Hello World!");
     }
 
-    
+
 }
