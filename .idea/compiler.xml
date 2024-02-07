@@ -9,8 +9,5 @@
         <module name="FPS-Game-Engine" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="FPS-Game-Engine" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
