@@ -26,4 +26,11 @@ class MySphere{
     public void setRadius(float radius) {
         this.radius = radius;
     }
+
+    public boolean intersects(MySphere other) {
+        // calculate the distance between two sphere centers
+        double distance = this.center.sub(other.center).length();
+
+        return distance <= (this.radius + other.radius);
+    }
 }
