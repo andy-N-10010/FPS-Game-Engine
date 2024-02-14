@@ -4,7 +4,7 @@ import org.ode4j.math.DVector3;
 
 public class MyCapsule {
     private DVector3 center; // capsule's center
-    private double height;    // capsule's height
+    private double height;    // capsule's height. does not include the spheres
     private double radius;    // top and bottom's spheres' radius
 
     public MyCapsule(DVector3 center, double height, double radius) {
