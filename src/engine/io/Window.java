@@ -1,5 +1,6 @@
 package engine.io;
 
+import gameLoop.Input;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -13,6 +14,8 @@ public class Window {
     public int frames;
     public static long time;
 
+    public Input input;
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
@@ -24,6 +27,8 @@ public class Window {
             System.err.println("ERROR: GLFW wasn't initializied");
             return;
         }
+
+        input = new Input();
 
         window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
 
@@ -37,6 +42,11 @@ public class Window {
         GLFW.glfwMakeContextCurrent(window);
 
         //createCallbacks();
+
+        GLFW.glfwSetKeyCallback(window,input.getKeyboardCallback());
+        GLFW.glfwSetCursorPosCallback(window,input.getMouseMoveCallback());
+        GLFW.glfwSetMouseButtonCallback(window,input.getMouseButtonsCallback());
+
 
         GLFW.glfwShowWindow(window);
 
@@ -61,6 +71,14 @@ public class Window {
 
     public boolean shouldClose() {
         return GLFW.glfwWindowShouldClose(window);
+    }
+
+    public void destory() {
+        input.destroy();
+        GLFW.glfwWindowShouldClose(window);
+        GLFW.glfwDestroyWindow(window);
+        GLFW.glfwTerminate();
+
     }
 }
 

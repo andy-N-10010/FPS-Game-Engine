@@ -20,15 +20,18 @@ public class renderEngine implements Runnable{
 
     public void run() {
         init();
-        while (true) {
+        while (!window.shouldClose()) {
             update();
             render();
+            if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) return;
         }
+        window.destory();
     }
 
     private void update() {
         System.out.println("Updating Game!");
         window.update();
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getMouseX() + ", y:" + Input.getMouseY());
     }
 
     private void render() {
