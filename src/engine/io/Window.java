@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.ode4j.math.DVector3;
 
 public class Window {
     private int width, height;
@@ -15,6 +16,11 @@ public class Window {
     public static long time;
 
     public Input input;
+    private DVector3 background = new DVector3(0, 0, 0);
+    private GLFWWindowSizeCallback sizeCallback;
+    private boolean isResized;
+    private boolean isFullscreen;
+    private int[] windowPosX = new int[1], windowPosY = new int[1];
 
     public Window(int width, int height, String title) {
         this.width = width;
@@ -30,7 +36,7 @@ public class Window {
 
         input = new Input();
 
-        window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
+        window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
 
         if (window == 0) {
             System.err.println("ERROR: Window wasn't created");
@@ -38,15 +44,16 @@ public class Window {
         }
 
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+        System.out.println(videoMode==null);
+        windowPosX[0] = (videoMode.width() - width) / 2;
+        windowPosY[0] = (videoMode.height() - height) / 2;
+        //GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
         GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
         GLFW.glfwMakeContextCurrent(window);
+        GL.createCapabilities();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        //createCallbacks();
-
-        GLFW.glfwSetKeyCallback(window,input.getKeyboardCallback());
-        GLFW.glfwSetCursorPosCallback(window,input.getMouseMoveCallback());
-        GLFW.glfwSetMouseButtonCallback(window,input.getMouseButtonsCallback());
-
+        createCallbacks();
 
         GLFW.glfwShowWindow(window);
 
@@ -55,7 +62,29 @@ public class Window {
         time = System.currentTimeMillis();
     }
 
+    private void createCallbacks() {
+        sizeCallback = new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int w, int h) {
+                width = w;
+                height = h;
+                isResized = true;
+            }
+        };
+        GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
+        GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
+        GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
+        GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
+    }
+
     public void update() {
+        if (isResized) {
+            GL11.glViewport(0, 0, width, height);
+            isResized = false;
+        }
+        GL11.glViewport(0, 0, width, height);
+        GL11.glClearColor((float)background.get0(), (float)background.get1(), (float)background.get2(), 1.0f);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GLFW.glfwPollEvents();
         frames++;
         if (System.currentTimeMillis() > time + 1000) {
@@ -73,12 +102,79 @@ public class Window {
         return GLFW.glfwWindowShouldClose(window);
     }
 
-    public void destory() {
+    public void destroy() {
         input.destroy();
+        sizeCallback.free();
         GLFW.glfwWindowShouldClose(window);
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
+    }
 
+    public void setBackgroundColor(float r, float g, float b) {
+        background.set(r, g, b);
+    }
+
+    public int getFrames() {
+        return frames;
+    }
+
+    public void setFrames(int frames) {
+        this.frames = frames;
+    }
+
+    public static long getTime() {
+        return time;
+    }
+
+    public static void setTime(long time) {
+        Window.time = time;
+    }
+
+    public Input getInput() {
+        return input;
+    }
+
+    public void setInput(Input input) {
+        this.input = input;
+    }
+
+    public DVector3 getBackground() {
+        return background;
+    }
+
+    public void setBackground(DVector3 background) {
+        this.background = background;
+    }
+
+    public GLFWWindowSizeCallback getSizeCallback() {
+        return sizeCallback;
+    }
+
+    public void setSizeCallback(GLFWWindowSizeCallback sizeCallback) {
+        this.sizeCallback = sizeCallback;
+    }
+
+    public boolean isResized() {
+        return isResized;
+    }
+
+    public void setResized(boolean resized) {
+        isResized = resized;
+    }
+
+    public boolean isFullscreen() {
+        return isFullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        isFullscreen = fullscreen;
+        isResized = true;
+        if (isFullscreen) {
+            GLFW.glfwGetWindowPos(window, windowPosX, windowPosY);
+            GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
+        } else {
+            GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
+        }
     }
 }
 
