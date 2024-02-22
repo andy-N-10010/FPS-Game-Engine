@@ -1,13 +1,28 @@
 package gameLoop;
 
+import engine.graphics.Mesh;
+import engine.graphics.Renderer;
+import engine.graphics.Vertex;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
+import org.ode4j.math.DVector3;
 
 import java.util.Random;
 
 public class renderEngine implements Runnable{
-    public static Window window;
-    public static final int width = 1280, height = 760;
+    public Window window;
+    public final int width = 1280, height = 760;
+    public Renderer renderer;
+    public Mesh mesh = new Mesh(new Vertex[] {
+            new Vertex(new DVector3(-0.5, 0.5, 0.0)),
+            new Vertex(new DVector3(0.5, 0.5, 0.0)),
+            new Vertex(new DVector3(0.5, -0.5, 0.0)),
+            new Vertex(new DVector3(-0.5, -0.5, 0.0))
+    }, new int[] {
+            0, 1, 2,
+            0, 3, 2
+    });
+
     public Thread game;
     private Random rand;
     public void start() {
@@ -16,11 +31,13 @@ public class renderEngine implements Runnable{
         rand = new Random();
     }
 
-    public static void init() {
+    public void init() {
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
-        window.setBackgroundColor(0,0,256);
+        renderer = new Renderer();
+        window.setBackgroundColor(1,0,0);
         window.create();
+        mesh.create();
     }
 
     public void run() {
@@ -48,6 +65,7 @@ public class renderEngine implements Runnable{
 
     private void render() {
         System.out.println("Rendering Game!");
+        renderer.renderMesh(mesh);
         window.swapBuffers();
     }
 
