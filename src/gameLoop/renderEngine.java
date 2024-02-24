@@ -35,7 +35,7 @@ public class renderEngine implements Runnable{
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         renderer = new Renderer();
-        window.setBackgroundColor(1,0,0);
+        window.setBackgroundColor(1.0f,0,0);
         window.create();
         mesh.create();
     }
@@ -60,7 +60,7 @@ public class renderEngine implements Runnable{
         // temp test code
         tempChangeBackground();
         window.update();
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getMouseX() + ", y:" + Input.getMouseY());
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
     }
 
     private void render() {
