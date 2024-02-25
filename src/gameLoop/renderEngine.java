@@ -17,10 +17,10 @@ public class renderEngine implements Runnable{
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
-            new Vertex(new DVector3(-0.5, 0.5, 0.0)),
-            new Vertex(new DVector3(0.5, 0.5, 0.0)),
-            new Vertex(new DVector3(0.5, -0.5, 0.0)),
-            new Vertex(new DVector3(-0.5, -0.5, 0.0))
+            new Vertex(new DVector3(-0.5, 0.5, 0.0), new DVector3(1.0,0.0,0.0)),
+            new Vertex(new DVector3(0.5, 0.5, 0.0), new DVector3(0.0,1.0,0.0)),
+            new Vertex(new DVector3(0.5, -0.5, 0.0), new DVector3(0.0,0.0,1.0)),
+            new Vertex(new DVector3(-0.5, -0.5, 0.0), new DVector3(1.0,1.0,0.0))
     }, new int[] {
             0, 1, 2,
             0, 3, 2
@@ -53,7 +53,7 @@ public class renderEngine implements Runnable{
             // press f11 to switch fullscreen and not
             if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) window.setFullscreen(!window.isFullscreen());
         }
-        window.destroy();
+        close();
     }
 
     private void tempChangeBackground() {
@@ -72,6 +72,12 @@ public class renderEngine implements Runnable{
         System.out.println("Rendering Game!");
         renderer.renderMesh(mesh);
         window.swapBuffers();
+    }
+
+    private void close() {
+        window.destroy();
+        mesh.destroy();
+        shader.destroy();
     }
 
     public static void main(String[] args) {
