@@ -2,6 +2,7 @@ package gameLoop;
 
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
+import engine.graphics.Shader;
 import engine.graphics.Vertex;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
@@ -13,6 +14,8 @@ public class renderEngine implements Runnable{
     public Window window;
     public final int width = 1280, height = 760;
     public Renderer renderer;
+
+    public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
             new Vertex(new DVector3(-0.5, 0.5, 0.0)),
             new Vertex(new DVector3(0.5, 0.5, 0.0)),
@@ -34,10 +37,12 @@ public class renderEngine implements Runnable{
     public void init() {
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
-        renderer = new Renderer();
+        shader = new Shader("/resources/shaders/mainVertex.glsl", "/resources/shaders/mainFragment.glsl");
+        renderer = new Renderer(shader);
         window.setBackgroundColor(1.0f,0,0);
         window.create();
         mesh.create();
+        shader.create();
     }
 
     public void run() {
