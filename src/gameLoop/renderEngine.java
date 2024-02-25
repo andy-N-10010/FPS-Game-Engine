@@ -34,7 +34,7 @@ public class renderEngine implements Runnable{
         rand = new Random();
     }
 
-    public void init() {`
+    public void init() {
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
