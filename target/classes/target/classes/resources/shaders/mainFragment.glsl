@@ -6,4 +6,6 @@ out vec4 outColor;
 
 void main() {
     outColor = vec4(color, 1.0);
+    color = vec3(position.x, position.y - position.x, position.y);
+
 }
