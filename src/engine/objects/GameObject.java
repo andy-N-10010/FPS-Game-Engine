@@ -17,11 +17,10 @@ public class GameObject {
     }
 
     public void update() {
-        //temp += 0.02;
-        //position.set0((float) Math.sin(temp));
-        //rotation.set((float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360);
-        //scale.set((float) Math.sin(temp), (float) Math.sin(temp), (float) Math.sin(temp));
-        position.add0(1);
+        temp += 0.02;
+        position.set0((float) Math.sin(temp));
+        rotation.set((float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360);
+        scale.set((float) Math.sin(temp), (float) Math.sin(temp), (float) Math.sin(temp));
     }
 
     public DVector3 getPosition() {
