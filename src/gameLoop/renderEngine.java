@@ -7,6 +7,7 @@ import engine.graphics.Vertex;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
+import engine.objects.GameObject;
 
 import java.util.Random;
 
@@ -26,6 +27,7 @@ public class renderEngine implements Runnable{
             0, 3, 2
     });
 
+    public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
 
     public Thread game;
     private Random rand;
@@ -63,15 +65,16 @@ public class renderEngine implements Runnable{
 
     private void update() {
         System.out.println("Updating Game!");
+        object.update();
         // temp test code
-        tempChangeBackground();
+        //tempChangeBackground();
         window.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
     }
 
     private void render() {
         System.out.println("Rendering Game!");
-        renderer.renderMesh(mesh);
+        renderer.renderMesh(object);
         window.swapBuffers();
     }
 

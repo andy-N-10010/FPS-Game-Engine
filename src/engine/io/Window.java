@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.ode4j.math.DVector3;
+import engine.math.Matrix4f;
 
 public class Window {
     private int width, height;
@@ -21,6 +22,7 @@ public class Window {
     private boolean isResized;
     private boolean isFullscreen;
     private int[] windowPosX = new int[1], windowPosY = new int[1];
+    private Matrix4f projection;
 
     public Window(int width, int height, String title) {
         this.width = width;
