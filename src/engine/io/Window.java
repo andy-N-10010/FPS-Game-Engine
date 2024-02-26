@@ -1,22 +1,21 @@
 package engine.io;
 
-import gameLoop.Input;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.ode4j.math.DVector3;
+import gameLoop.Input;
 import engine.math.Matrix4f;
+import org.ode4j.math.DVector3;
 
 public class Window {
     private int width, height;
     private String title;
     private long window;
-    public int frames;
-    public static long time;
-
-    public Input input;
+    private int frames;
+    private static long time;
+    private Input input;
     private DVector3 background = new DVector3(0, 0, 0);
     private GLFWWindowSizeCallback sizeCallback;
     private boolean isResized;
@@ -28,6 +27,7 @@ public class Window {
         this.width = width;
         this.height = height;
         this.title = title;
+        projection = Matrix4f.projection(70.0f, (float) width / (float) height, 0.1f, 1000.0f);
     }
 
     public void create() {
@@ -37,7 +37,6 @@ public class Window {
         }
 
         input = new Input();
-
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
 
         if (window == 0) {
@@ -46,11 +45,9 @@ public class Window {
         }
 
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-        System.out.println(videoMode==null);
         windowPosX[0] = (videoMode.width() - width) / 2;
         windowPosY[0] = (videoMode.height() - height) / 2;
-        //GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
-        GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
+        GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
         GLFW.glfwMakeContextCurrent(window);
         GL.createCapabilities();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -66,13 +63,13 @@ public class Window {
 
     private void createCallbacks() {
         sizeCallback = new GLFWWindowSizeCallback() {
-            @Override
             public void invoke(long window, int w, int h) {
                 width = w;
                 height = h;
                 isResized = true;
             }
         };
+
         GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
         GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
         GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
@@ -85,7 +82,6 @@ public class Window {
             GL11.glViewport(0, 0, width, height);
             isResized = false;
         }
-        GL11.glViewport(0, 0, width, height);
         GL11.glClearColor((float)background.get0(), (float)background.get1(), (float)background.get2(), 1.0f);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GLFW.glfwPollEvents();
@@ -117,60 +113,12 @@ public class Window {
         background.set(r, g, b);
     }
 
-    public int getFrames() {
-        return frames;
-    }
-
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
-    public static long getTime() {
-        return time;
-    }
-
-    public static void setTime(long time) {
-        Window.time = time;
-    }
-
-    public Input getInput() {
-        return input;
-    }
-
-    public void setInput(Input input) {
-        this.input = input;
-    }
-
-    public DVector3 getBackground() {
-        return background;
-    }
-
-    public void setBackground(DVector3 background) {
-        this.background = background;
-    }
-
-    public GLFWWindowSizeCallback getSizeCallback() {
-        return sizeCallback;
-    }
-
-    public void setSizeCallback(GLFWWindowSizeCallback sizeCallback) {
-        this.sizeCallback = sizeCallback;
-    }
-
-    public boolean isResized() {
-        return isResized;
-    }
-
-    public void setResized(boolean resized) {
-        isResized = resized;
-    }
-
     public boolean isFullscreen() {
         return isFullscreen;
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        isFullscreen = fullscreen;
+    public void setFullscreen(boolean isFullscreen) {
+        this.isFullscreen = isFullscreen;
         isResized = true;
         if (isFullscreen) {
             GLFW.glfwGetWindowPos(window, windowPosX, windowPosY);
@@ -179,5 +127,24 @@ public class Window {
             GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
         }
     }
-}
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public long getWindow() {
+        return window;
+    }
+
+    public Matrix4f getProjectionMatrix() {
+        return projection;
+    }
+}
