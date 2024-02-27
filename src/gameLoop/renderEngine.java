@@ -4,6 +4,7 @@ import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex;
+import engine.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
@@ -73,12 +74,13 @@ public class renderEngine implements Runnable{
         // temp test code
         //tempChangeBackground();
         window.update();
+        camera.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
     }
 
     private void render() {
         System.out.println("Rendering Game!");
-        renderer.renderMesh(object);
+        renderer.renderMesh(object, camera);
         window.swapBuffers();
     }
 
