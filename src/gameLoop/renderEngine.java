@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
 import engine.objects.GameObject;
+import engine.objects.Camera;
 
 import java.util.Random;
 
@@ -28,6 +29,9 @@ public class renderEngine implements Runnable{
     });
 
     public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+
+    public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
+
 
     public Thread game;
     private Random rand;
