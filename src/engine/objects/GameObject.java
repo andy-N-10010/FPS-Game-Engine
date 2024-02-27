@@ -1,7 +1,6 @@
 package engine.objects;
 
 import engine.graphics.Mesh;
-
 import org.ode4j.math.DVector3;
 
 public class GameObject {
@@ -17,10 +16,7 @@ public class GameObject {
     }
 
     public void update() {
-        //temp += 0.02;
-        //position.set0((float) Math.sin(temp));
-        //rotation.set((float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360, (float) Math.sin(temp) * 360);
-        //scale.set((float) Math.sin(temp), (float) Math.sin(temp), (float) Math.sin(temp));
+        //never called
         position.set2(position.get2() - 0.05f);
     }
 

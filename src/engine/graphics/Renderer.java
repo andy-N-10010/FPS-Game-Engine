@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.objects.GameObject;
 import engine.graphics.Shader;
 import engine.math.Matrix4f;
+import engine.io.Window;
 import engine.objects.Camera;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -10,8 +11,11 @@ import org.lwjgl.opengl.GL30;
 
 public class Renderer {
     private Shader shader;
-    public Renderer(Shader shader) {
+    private Window window;
+    public Renderer(Window window,Shader shader) {
+        this.window = window;
         this.shader = shader;
+
     }
     public void renderMesh(GameObject object, Camera camera) {
         GL30.glBindVertexArray(object.getMesh().getVAO());
@@ -21,6 +25,7 @@ public class Renderer {
         shader.bind();
         shader.setUniform("model", Matrix4f.transform(object.getPosition(), object.getRotation(), object.getScale()));
         shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));
+        shader.setUniform("projection", window.getProjectionMatrix());
         GL11.glDrawElements(GL11.GL_TRIANGLES, object.getMesh().getIndices().length, GL11.GL_UNSIGNED_INT, 0);
         shader.unbind();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);

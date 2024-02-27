@@ -4,7 +4,6 @@ import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex;
-import engine.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
@@ -46,7 +45,7 @@ public class renderEngine implements Runnable{
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
-        renderer = new Renderer(shader);
+        renderer = new Renderer(window,shader);
         window.setBackgroundColor(1.0f,0,0);
         window.create();
         mesh.create();
@@ -60,6 +59,8 @@ public class renderEngine implements Runnable{
             render();
             // press f11 to switch fullscreen and not
             if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) window.setFullscreen(!window.isFullscreen());
+            //if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) window.mouseState(true);
+            window.mouseState(true);
         }
         close();
     }
@@ -70,9 +71,7 @@ public class renderEngine implements Runnable{
 
     private void update() {
         System.out.println("Updating Game!");
-        object.update();
-        // temp test code
-        //tempChangeBackground();
+        //object.update();
         window.update();
         camera.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
