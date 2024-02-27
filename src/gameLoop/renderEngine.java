@@ -7,6 +7,7 @@ import engine.graphics.Vertex;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
+import engine.math.DVector2;
 import engine.objects.GameObject;
 import engine.objects.Camera;
 
@@ -19,16 +20,70 @@ public class renderEngine implements Runnable{
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
-            new Vertex(new DVector3(-0.5, 0.5, 0.0), new DVector3(1.0,0.0,0.0)),
-            new Vertex(new DVector3(0.5, 0.5, 0.0), new DVector3(0.0,1.0,0.0)),
-            new Vertex(new DVector3(0.5, -0.5, 0.0), new DVector3(0.0,0.0,1.0)),
-            new Vertex(new DVector3(-0.5, -0.5, 0.0), new DVector3(1.0,1.0,0.0))
+            //Back face
+            new Vertex(new DVector3(-0.5f,  0.5f, -0.5f), new DVector3(0.0f,0.0f,0)),
+            new Vertex(new DVector3(-0.5f, -0.5f, -0.5f), new DVector3(0.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f, -0.5f, -0.5f), new DVector3(1.0f, 0.0f,1)),
+            new Vertex(new DVector3( 0.5f,  0.5f, -0.5f), new DVector3(1.0f, 0.0f,0)),
+
+            //Front face
+            new Vertex(new DVector3(-0.5f,  0.5f,  0.5f), new DVector3(0.0f, 0.0f,1)),
+            new Vertex(new DVector3(-0.5f, -0.5f,  0.5f), new DVector3(0.0f, 1.0f,1)),
+            new Vertex(new DVector3( 0.5f, -0.5f,  0.5f), new DVector3(1.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f,  0.5f,  0.5f), new DVector3(1.0f, 0.0f,1)),
+
+            //Right face
+            new Vertex(new DVector3( 0.5f,  0.5f, -0.5f), new DVector3(0.0f, 0.0f,1)),
+            new Vertex(new DVector3( 0.5f, -0.5f, -0.5f), new DVector3(0.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f, -0.5f,  0.5f), new DVector3(1.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f,  0.5f,  0.5f), new DVector3(1.0f, 0.0f,0)),
+
+            //Left face
+            new Vertex(new DVector3(-0.5f,  0.5f, -0.5f), new DVector3(0.0f, 0.0f,1)),
+            new Vertex(new DVector3(-0.5f, -0.5f, -0.5f), new DVector3(0.0f, 1.0f,1)),
+            new Vertex(new DVector3(-0.5f, -0.5f,  0.5f), new DVector3(1.0f, 0.0f,1)),
+            new Vertex(new DVector3(-0.5f,  0.5f,  0.5f), new DVector3(1.0f, 0.0f,1)),
+
+            //Top face
+            new Vertex(new DVector3(-0.5f,  0.5f,  0.5f), new DVector3(1.0f, 0.0f,1)),
+            new Vertex(new DVector3(-0.5f,  0.5f, -0.5f), new DVector3(0.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f,  0.5f, -0.5f), new DVector3(1.0f, 0.0f,1)),
+            new Vertex(new DVector3( 0.5f,  0.5f,  0.5f), new DVector3(1.0f, 0.0f,0)),
+
+            //Bottom face
+            new Vertex(new DVector3(-0.5f, -0.5f,  0.5f), new DVector3(1.0f, 0.0f,0)),
+            new Vertex(new DVector3(-0.5f, -0.5f, -0.5f), new DVector3(0.0f, 1.0f,0)),
+            new Vertex(new DVector3( 0.5f, -0.5f, -0.5f), new DVector3(0.0f, 0.0f,1)),
+            new Vertex(new DVector3( 0.5f, -0.5f,  0.5f), new DVector3(0.3f, 1.0f,1)),
     }, new int[] {
-            0, 1, 2,
-            0, 3, 2
+            //Back face
+            0, 1, 3,
+            3, 1, 2,
+
+            //Front face
+            4, 5, 7,
+            7, 5, 6,
+
+            //Right face
+            8, 9, 11,
+            11, 9, 10,
+
+            //Left face
+            12, 13, 15,
+            15, 13, 14,
+
+            //Top face
+            16, 17, 19,
+            19, 17, 18,
+
+            //Bottom face
+            20, 21, 23,
+            23, 21, 22
     });
 
     public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object2 = new GameObject(new DVector3(1,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object3 = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
     public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
 
@@ -46,7 +101,7 @@ public class renderEngine implements Runnable{
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
         renderer = new Renderer(window,shader);
-        window.setBackgroundColor(1.0f,0,0);
+        window.setBackgroundColor(0.5f,1,1);
         window.create();
         mesh.create();
         shader.create();
@@ -80,6 +135,8 @@ public class renderEngine implements Runnable{
     private void render() {
         System.out.println("Rendering Game!");
         renderer.renderMesh(object, camera);
+        renderer.renderMesh(object2, camera);
+        renderer.renderMesh(object3, camera);
         window.swapBuffers();
     }
 
