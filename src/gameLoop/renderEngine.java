@@ -4,6 +4,7 @@ import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex;
+import engine.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.io.Window;
 import org.ode4j.math.DVector3;
@@ -28,9 +29,11 @@ public class renderEngine implements Runnable{
             0, 3, 2
     });
 
-    public GameObject object = new GameObject(new DVector3(0,0,-1),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
 
-    public Camera camera = new Camera(new DVector3(0,0,0),new DVector3(0,0,0));
+    public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
+
+
     public Thread game;
     private Random rand;
     public void start() {
@@ -43,7 +46,7 @@ public class renderEngine implements Runnable{
         System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
-        renderer = new Renderer(window, shader);
+        renderer = new Renderer(shader);
         window.setBackgroundColor(1.0f,0,0);
         window.create();
         mesh.create();
@@ -67,10 +70,11 @@ public class renderEngine implements Runnable{
 
     private void update() {
         System.out.println("Updating Game!");
-        //object.update();
+        object.update();
         // temp test code
         //tempChangeBackground();
         window.update();
+        camera.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
     }
 
