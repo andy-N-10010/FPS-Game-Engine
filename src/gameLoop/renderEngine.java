@@ -85,7 +85,8 @@ public class renderEngine implements Runnable{
             23, 21, 22
     });
 
-    public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object = new GameObject(new DVector3(1,1.2,-0.5),new DVector3(17.141,1.403,0.091),new DVector3(1,1,1),mesh);
+    //public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(1.05,358.46,124.13),new DVector3(1,1,1),mesh);
     public GameObject object2 = new GameObject(new DVector3(1,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
     public GameObject object3 = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
@@ -109,6 +110,12 @@ public class renderEngine implements Runnable{
         window.create();
         mesh.create();
         shader.create();
+
+        //object.generateAABB();
+        //object3.generateAABB();
+        object.generateOBB();
+        object2.generateOBB();
+        //object3.generateOBB();
     }
 
     public void run() {
@@ -134,10 +141,18 @@ public class renderEngine implements Runnable{
 
     private void update() {
         System.out.println("Updating Game!");
-        //object.update();
+
         window.update();
         camera.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
+        object.update();
+        object2.update();
+        //object3.update();
+        //boolean resultAABB = object.getMyAABB().intersects(object3.getMyAABB());
+        //boolean resultOBB = object.getMyOBB().intersects(object3.getMyOBB());
+        boolean resultOBB2 = object.getMyOBB().intersects(object2.getMyOBB());
+        //System.out.println("AABB: " + resultAABB);
+        System.out.println("OBB: " + resultOBB2);
     }
 
     private void render() {

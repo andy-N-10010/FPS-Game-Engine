@@ -1,8 +1,9 @@
 package collision;
 
+import engine.objects.GameObject;
 import org.ode4j.math.DVector3;
 
-public class MyAABB {
+public class MyAABB extends MyShape{
     // 0, 1, 2 represent x, y, z
     private double min0;
     private double max0;
@@ -11,7 +12,8 @@ public class MyAABB {
     private double min2;
     private double max2;
 
-    public MyAABB(double min0, double max0, double min1, double max1, double min2, double max2) {
+    public MyAABB(GameObject object, double min0, double max0, double min1, double max1, double min2, double max2) {
+        super(object);
         this.min0 = min0;
         this.max0 = max0;
         this.min1 = min1;
@@ -123,7 +125,7 @@ public class MyAABB {
         return maxVertex.get(i);
     }
 
-    // intersect between AABB and AABB
+    // intersect between AABB and AABB. test pass!
     public boolean intersects(MyAABB other) {
         if (this.max0 < other.min0 || this.min0 > other.max0) return false;
         if (this.max1 < other.min1 || this.min1 > other.max1) return false;
@@ -131,6 +133,7 @@ public class MyAABB {
         return true;
     }
 
+    // test pass!
     public boolean intersects(MySphere sphere) {
         // use the square sum of the centers of sphere and AABB to compare with the sphere's radius
         double distanceSquared = 0.0f;
@@ -151,5 +154,15 @@ public class MyAABB {
         }
 
         return distanceSquared <= (sphere.getRadius() * sphere.getRadius());
+    }
+
+    @Override
+    public void update() {
+        max0 = getObject().getPosition().get0() + getObject().getScale().get0() / 2;
+        min0 = getObject().getPosition().get0() - getObject().getScale().get0() / 2;
+        max1 = getObject().getPosition().get1() + getObject().getScale().get1() / 2;
+        min1 = getObject().getPosition().get1() - getObject().getScale().get1() / 2;
+        max2 = getObject().getPosition().get2() + getObject().getScale().get2() / 2;
+        min2 = getObject().getPosition().get2() - getObject().getScale().get2() / 2;
     }
 }

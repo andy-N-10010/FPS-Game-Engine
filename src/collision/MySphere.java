@@ -1,12 +1,14 @@
 package collision;
 
+import engine.objects.GameObject;
 import org.ode4j.math.*;
 
-class MySphere{
+public class MySphere extends MyShape{
     private DVector3 center; // sphere center
     private double radius; // radius
 
-    public MySphere(DVector3 center, float radius) {
+    public MySphere(GameObject object, DVector3 center, float radius) {
+        super(object);
         this.center = center;
         this.radius = radius;
     }
@@ -27,10 +29,16 @@ class MySphere{
         this.radius = radius;
     }
 
+    // test pass!
     public boolean intersects(MySphere other) {
         // calculate the distance between two sphere centers
-        double distance = this.center.sub(other.center).length();
+        double distance = this.center.copy().sub(other.center).length();
 
         return distance <= (this.radius + other.radius);
+    }
+
+    @Override
+    public void update() {
+        center = new DVector3(getObject().getPosition());
     }
 }

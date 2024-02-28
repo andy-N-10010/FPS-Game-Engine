@@ -1,16 +1,22 @@
 package collision;
 
+import engine.objects.GameObject;
 import org.ode4j.math.DVector3;
 
-public class MyOBB {
+public class MyOBB extends MyShape{
     private DVector3 center; // center of OBB
     private DVector3[] localAxis; // "local" xyz
     private float[] axisRadius;  // each local axis's radius
 
-    public MyOBB(DVector3 center, DVector3[] localAxis, float[] axisRadius) {
+    public MyOBB(GameObject object, DVector3 center, DVector3[] localAxis, float[] axisRadius) {
+        super(object);
         this.center = center;
         this.localAxis = localAxis;
         this.axisRadius = axisRadius;
+        for (float r: axisRadius
+             ) {
+            System.out.println(r);
+        }
     }
 
     public DVector3 getCenter() {
@@ -53,15 +59,19 @@ public class MyOBB {
         this.axisRadius[2] = localZRadius;
     }
 
-    public DVector3[] getVertices() {
+    public DVector3[] getVertices()
+    {
         // an array of 8
         DVector3[] vertices = new DVector3[8];
         int i = 0;
 
         // to distinguish negative and positive x (also for y and z)
-        for (int x = -1; x <= 1; x += 2) {
-            for (int y = -1; y <= 1; y += 2) {
-                for (int z = -1; z <= 1; z += 2) {
+        for (int x = -1; x <= 1; x += 2)
+        {
+            for (int y = -1; y <= 1; y += 2)
+            {
+                for (int z = -1; z <= 1; z += 2)
+                {
                     // the copy of center
                     DVector3 vertex = new DVector3(center);
                     // the copy of three local axes for scaling and adding to the center
@@ -84,7 +94,8 @@ public class MyOBB {
         return vertices;
     }
 
-    public boolean intersects(MyOBB other) {
+    public boolean intersects(MyOBB other)
+    {
         DVector3[] axes = new DVector3[]{
                 // this OBB's local axes
                 localAxis[0],
@@ -106,34 +117,30 @@ public class MyOBB {
                 localAxis[2].cross(other.getLocalAxis()[2])
         };
 
-        for (DVector3 axis : axes) {
-            if (axis.lengthSquared() < 1e-7) {
-                System.out.println("Warning: axis value is not illegal");
-                continue;
-            }
-
-            Projection p1 = projectOntoAxis(this, axis);
-            Projection p2 = projectOntoAxis(other, axis);
-
-            if (!p1.overlaps(p2)) {
+        for (DVector3 axe : axes) {
+            if (NotInteractiveOBB(getVertices(), other.getVertices(), axe)) {
                 return false;
             }
         }
-
         return true;
     }
 
-    private Projection projectOntoAxis(MyOBB obb, DVector3 axis) {
-        double min = axis.dot(obb.getLocalAxis()[0]);
-        double max = min;
+    private boolean NotInteractiveOBB(DVector3[] vertices1, DVector3[] vertices2, DVector3 axis)
+    {
+        float[] limit1 = GetProjectionLimit(vertices1, axis);
+        float[] limit2 = GetProjectionLimit(vertices2, axis);
+        return limit1[0] > limit2[1] || limit2[0] > limit1[1];
+    }
 
-        for (int i = 1; i < obb.getLocalAxis().length; i++) {
-            double value = axis.dot(obb.getLocalAxis()[i]);
-            min = Math.min(min, value);
-            max = Math.max(max, value);
+    private float[] GetProjectionLimit(DVector3[] vertices, DVector3 axis)
+    {
+        float[] result = { 999999, -999999 };
+        for (DVector3 vertex : vertices) {
+            float dot = (float) vertex.dot(axis);
+            result[0] = Math.min(dot, result[0]);
+            result[1] = Math.max(dot, result[1]);
         }
-
-        return new Projection(min, max);
+        return result;
     }
 
     public boolean intersects(MySphere sphere) {
@@ -171,5 +178,13 @@ public class MyOBB {
         }
 
         return result;
+    }
+
+    @Override
+    public void update() {
+        center = new DVector3(getObject().getPosition());
+        localAxis[0] = new DVector3(getObject().getRight());
+        localAxis[1] = new DVector3(getObject().getUp());
+        localAxis[2] = new DVector3(getObject().getForward());
     }
 }
