@@ -74,7 +74,7 @@ public class Matrix4f {
 
         Matrix4f rotationMatrix = Matrix4f.multiply(rotXMatrix, Matrix4f.multiply(rotYMatrix, rotZMatrix));
 
-        result = Matrix4f.multiply(translationMatrix, Matrix4f.multiply(rotationMatrix, scaleMatrix));
+        result = Matrix4f.multiply(scaleMatrix, Matrix4f.multiply(rotationMatrix, translationMatrix));
 
         return result;
     }
