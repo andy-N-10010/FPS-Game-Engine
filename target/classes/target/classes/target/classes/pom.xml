@@ -13,6 +13,14 @@
         <lwjgl.natives>natives-windows</lwjgl.natives>
     </properties>
 
+    <scm>
+        <url>https://github.com/EsotericSoftware/kryonet</url>
+        <connection>scm:git:https://github.com/EsotericSoftware/kryonet.git</connection>
+        <developerConnection>scm:git:https://github.com/EsotericSoftware/kryonet.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+
 
     <dependencyManagement>
         <dependencies>
@@ -27,6 +35,19 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.18.Final</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.esotericsoftware/kryonet -->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryonet</artifactId>
+            <version>2.22.0-RC1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>

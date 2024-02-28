@@ -1,5 +1,6 @@
 package gameLoop;
 
+import com.esotericsoftware.kryonet.Client;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
@@ -17,6 +18,9 @@ public class renderEngine implements Runnable{
     public Window window;
     public final int width = 1280, height = 760;
     public Renderer renderer;
+
+    //Client from kryonet
+    private Client client;
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
@@ -118,6 +122,10 @@ public class renderEngine implements Runnable{
             window.mouseState(true);
         }
         close();
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     private void tempChangeBackground() {
