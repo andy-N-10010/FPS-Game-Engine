@@ -4,6 +4,7 @@ import engine.objects.GameObject;
 import engine.math.Matrix4f;
 import engine.io.Window;
 import engine.objects.Camera;
+import networking.Player;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -11,6 +12,10 @@ import org.lwjgl.opengl.GL30;
 public class Renderer {
     private Shader shader;
     private Window window;
+
+    //Test
+    Player p = new Player("Test");
+
     public Renderer(Window window,Shader shader) {
         this.window = window;
         this.shader = shader;

@@ -85,9 +85,9 @@ public class renderEngine implements Runnable{
             23, 21, 22
     });
 
-    public GameObject object = new GameObject(new DVector3(1,1,1),new DVector3(45,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object = new GameObject(new DVector3(1,0.9,0),new DVector3(0,0,45),new DVector3(1,1,1),mesh);
     //public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(1.05,358.46,124.13),new DVector3(1,1,1),mesh);
-    public GameObject object2 = new GameObject(new DVector3(1,1,1),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject object2 = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
     public GameObject object3 = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
     public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));

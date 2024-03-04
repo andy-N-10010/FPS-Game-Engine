@@ -19,6 +19,7 @@ public class PlayerHandler {
         for (int i = 0; i < this.players.size(); i++) {
             this.players.get(i).update();
         }
+
     }
 
 }
