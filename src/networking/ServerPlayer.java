@@ -9,6 +9,8 @@ public class ServerPlayer {
     private float x;
     private float y;
 
+    private float z;
+
     public ServerPlayer(String username) {
         this.username = username;
     }
@@ -23,6 +25,10 @@ public class ServerPlayer {
 
     public float getY() {
         return y;
+    }
+
+    public float getZ() {
+        return z;
     }
 
     public String getUsername() {

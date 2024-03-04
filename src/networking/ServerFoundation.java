@@ -23,10 +23,10 @@ public class ServerFoundation {
     public ServerFoundation() {
         this.server = new Server(1_000_000, 1_000_000);
 
-        this.server.getKryo().register(PlayerAddEvent.class);
-        this.server.getKryo().register(PlayerRemoveEvent.class);
-        this.server.getKryo().register(PlayerUpdateEvent.class);
-        this.server.getKryo().register(String.class);
+//        this.server.getKryo().register(PlayerAddEvent.class);
+//        this.server.getKryo().register(PlayerRemoveEvent.class);
+//        this.server.getKryo().register(PlayerUpdateEvent.class);
+//        this.server.getKryo().register(String.class);
 
 
         this.bindServer(6334,6334);
@@ -42,7 +42,7 @@ public class ServerFoundation {
             this.server.bind(tcpPort, udpPort);
 
         } catch(IOException e) {
-            System.err.println("Error binding server");
+            e.printStackTrace();
         }
     }
 

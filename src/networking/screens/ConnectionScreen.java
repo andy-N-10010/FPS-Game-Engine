@@ -8,16 +8,19 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class ConnectionScreen {
-    private String IP_Address;
+    private String TCP;
     private String port;
     private String username;
 
+    private String UDP;
 
-    public ConnectionScreen(String ipAddress, String userport, String name) {
 
-        IP_Address = ipAddress;
+    public ConnectionScreen(String tcp, String userport, String name, String udp) {
+
+        TCP = tcp;
         port = userport;
         username = name;
+        UDP = udp;
 
     }
 
@@ -27,7 +30,7 @@ public class ConnectionScreen {
 
         try {
             client.start();
-            client.connect(15000, IP_Address, Integer.parseInt(port));
+            client.connect(15000, TCP, Integer.parseInt(port), Integer.parseInt(UDP));
             System.out.println("Established Connection");
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,7 +54,7 @@ public class ConnectionScreen {
 
         String username = input.nextLine();
 
-        ConnectionScreen connectionScreen = new ConnectionScreen(IPAddress,port,username);
+        ConnectionScreen connectionScreen = new ConnectionScreen(IPAddress,port,username,IPAddress);
 
         connectionScreen.establishConnection();
 
