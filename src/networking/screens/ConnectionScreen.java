@@ -2,7 +2,7 @@ package networking.screens;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
-import gameLoop.renderEngine;
+//import gameLoop.renderEngine;
 
 import java.io.IOException;
 import java.util.Scanner;
