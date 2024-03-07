@@ -13,8 +13,8 @@ public class GameObject {
     private DQuaternion rotationQuaternion;
     private DVector3 right, up, forward;
     private Mesh mesh;
-    public DBody body;
-    public DMass mass;
+    private DBody body;
+    private DMass mass;
     //private MyShape collider;
     private MyAABB myAABB;
     private MySphere mySphere;
@@ -142,5 +142,21 @@ public class GameObject {
         result.set1((num7 + num12) * point.get0() + (1f - (num4 + num6)) * point.get1() + (num9 - num10) * point.get2());
         result.set2((num8 - num11) * point.get0() + (num9 + num10) * point.get1() + (1f - (num4 + num5)) * point.get2());
         return result;
+    }
+
+    public DBody getBody() {
+        return body;
+    }
+
+    public void setBody(DBody body) {
+        this.body = body;
+    }
+
+    public DMass getMass() {
+        return mass;
+    }
+
+    public void setMass(DMass mass) {
+        this.mass = mass;
     }
 }
