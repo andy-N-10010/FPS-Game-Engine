@@ -92,6 +92,8 @@ public class GravitySimulation implements Runnable{
     });
 
     public GameObject objectSpin = new GameObject(new DVector3(2.9,4,0),new DVector3(0,0,45),new DVector3(1,1,1),mesh);
+
+    //Player object
     public GameObject objectNotSpin = new GameObject(new DVector3(0,2,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
     public GameObject objectPlane = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
@@ -108,7 +110,7 @@ public class GravitySimulation implements Runnable{
     }
 
     public void init() {
-        System.out.println("Initializing Game!");
+        //System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
         renderer = new Renderer(window,shader);
@@ -171,7 +173,7 @@ public class GravitySimulation implements Runnable{
     }
 
     private void update() {
-        System.out.println("Updating Game!");
+        //System.out.println("Updating Game!");
 
         window.update();
         camera.update();
@@ -241,13 +243,13 @@ public class GravitySimulation implements Runnable{
         //System.out.println("OBB12: " + resultOBB12);
 
         shoot();
-        System.out.println("Camera rotation: " + camera.getRotation());
+        //System.out.println("Camera rotation: " + camera.getRotation());
         // object 3 doesn't move
         world.step(0.01);
     }
 
     private void render() {
-        System.out.println("Rendering Game!");
+        //System.out.println("Rendering Game!");
         renderer.renderMesh(objectSpin, camera);
         renderer.renderMesh(objectNotSpin, camera);
         renderer.renderMesh(objectPlane, camera);

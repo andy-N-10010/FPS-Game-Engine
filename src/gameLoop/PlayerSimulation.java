@@ -108,7 +108,7 @@ public class PlayerSimulation implements Runnable{
     }
 
     public void init() {
-        System.out.println("Initializing Game!");
+        //System.out.println("Initializing Game!");
         window = new Window(width, height, "Game");
         shader = new Shader("src/resources/shaders/mainVertex.glsl", "src/resources/shaders/mainFragment.glsl");
         renderer = new Renderer(window,shader);
@@ -174,7 +174,7 @@ public class PlayerSimulation implements Runnable{
     }
 
     private void update() {
-        System.out.println("Updating Game!");
+        //System.out.println("Updating Game!");
 
         window.update();
         objectSpin.update();
@@ -219,7 +219,7 @@ public class PlayerSimulation implements Runnable{
         }
 
         //System.out.println("AABB: " + resultAABB);
-        System.out.println("OBB12: " + resultOBB12);
+        //System.out.println("OBB12: " + resultOBB12);
 
         camera.update();
         if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
@@ -257,7 +257,7 @@ public class PlayerSimulation implements Runnable{
     }
 
     private void render() {
-        System.out.println("Rendering Game!");
+        //System.out.println("Rendering Game!");
         renderer.renderMesh(objectSpin, camera);
         //renderer.renderMesh(objectNotSpin, camera);
         renderer.renderMesh(objectPlane, camera);

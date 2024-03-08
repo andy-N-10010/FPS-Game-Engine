@@ -7,15 +7,19 @@ public class Player {
     private final DVector3 position;
     private final DVector3 serverPosition;
 
-    private final String username;
+    //private final String username;
+
+    public String username;
+
+    public int id,x,y,z;
 
     private float pastTime;
 
-    public Player(final String username) {
+    public Player() {
         this.position = new DVector3();
         this.serverPosition = new DVector3();
 
-        this.username = username;
+        //this.username = username;
     }
 
     public void render() {

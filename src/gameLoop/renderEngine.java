@@ -140,7 +140,7 @@ public class renderEngine implements Runnable{
     }
 
     private void update() {
-        System.out.println("Updating Game!");
+        //System.out.println("Updating Game!");
 
         window.update();
         camera.update();
@@ -152,11 +152,11 @@ public class renderEngine implements Runnable{
         //boolean resultOBB = object.getMyOBB().intersects(object3.getMyOBB());
         boolean resultOBB2 = object.getMyOBB().intersects(object2.getMyOBB());
         //System.out.println("AABB: " + resultAABB);
-        System.out.println("OBB: " + resultOBB2);
+        //System.out.println("OBB: " + resultOBB2);
     }
 
     private void render() {
-        System.out.println("Rendering Game!");
+        //System.out.println("Rendering Game!");
         renderer.renderMesh(object, camera);
         renderer.renderMesh(object2, camera);
         renderer.renderMesh(object3, camera);

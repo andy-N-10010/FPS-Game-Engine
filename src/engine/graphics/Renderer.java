@@ -14,7 +14,7 @@ public class Renderer {
     private Window window;
 
     //Test
-    Player p = new Player("Test");
+    //Player p = new Player();
 
     public Renderer(Window window,Shader shader) {
         this.window = window;
