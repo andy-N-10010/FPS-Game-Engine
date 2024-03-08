@@ -172,6 +172,7 @@ public class GameObject {
             this.setPosition(getPosition().get0(), getPosition().get1() + 0.02, getPosition().get2());
             this.getBody().setPosition(getBody().getPosition().get0(), getBody().getPosition().get1() + 0.02, getBody().getPosition().get2());
             this.getBody().addForce(0, 0.2, 0);
+            myOBB.update();
             canJump = false;
         }
     }

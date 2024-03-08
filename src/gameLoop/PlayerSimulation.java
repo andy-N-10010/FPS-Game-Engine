@@ -7,7 +7,6 @@ import engine.graphics.Shader;
 import engine.graphics.Vertex;
 import engine.io.Window;
 import engine.objects.Bullet;
-import engine.objects.Camera;
 import engine.objects.GameObject;
 import engine.objects.PlayerCamera;
 import org.lwjgl.glfw.GLFW;
@@ -178,8 +177,6 @@ public class PlayerSimulation implements Runnable{
         System.out.println("Updating Game!");
 
         window.update();
-        camera.update();
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
         objectSpin.update();
         objectNotSpin.update();
         objectPlane.update();
@@ -224,7 +221,37 @@ public class PlayerSimulation implements Runnable{
         //System.out.println("AABB: " + resultAABB);
         System.out.println("OBB12: " + resultOBB12);
 
-        System.out.println("Camera rotation: " + camera.getRotation());
+        camera.update();
+        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+            camera.moveLeft();
+            if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
+                camera.moveRight();
+            }
+        }
+        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+            camera.moveRight();
+            if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
+                camera.moveLeft();
+            }
+        }
+        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
+            camera.moveForward();
+            if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
+                camera.moveBack();
+            }
+        }
+        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
+            camera.moveBack();
+            if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
+                camera.moveForward();
+            }
+        }
+        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+            camera.getPlayerObj().jump();
+        }
+
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
+
         // object 3 doesn't move
         world.step(0.01);
     }

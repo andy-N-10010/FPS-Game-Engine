@@ -25,12 +25,12 @@ public class Camera {
         float x = (float) Math.sin(Math.toRadians(rotation.get1())) * moveSpeed;
         float z = (float) Math.cos(Math.toRadians(rotation.get1())) * moveSpeed;
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) position = position.add(new DVector3(-z,0,x));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) position = position.add(new DVector3(z,0,-x));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) position = position.add(new DVector3(-x,0,-z));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) position = position.add(new DVector3(x,0,z));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) position = position.add(new DVector3(0,moveSpeed,0));
-        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) position = position.add(new DVector3(0,-moveSpeed,0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_A)) position.add(new DVector3(-z,0,x));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_D)) position.add(new DVector3(z,0,-x));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_W)) position.add(new DVector3(-x,0,-z));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_S)) position.add(new DVector3(x,0,z));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) position.add(new DVector3(0,moveSpeed,0));
+        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) position.add(new DVector3(0,-moveSpeed,0));
 
         float dx = (float) (newMouseX - oldMouseX);
         float dy = (float) (newMouseY - oldMouseY);
