@@ -88,10 +88,9 @@ public class GravitySimulation implements Runnable{
             23, 21, 22
     });
 
-    public GameObject object = new GameObject(new DVector3(0.9,0.9,0),new DVector3(0,0,45),new DVector3(1,1,1),mesh);
-    //public GameObject object = new GameObject(new DVector3(0,0,0),new DVector3(1.05,358.46,124.13),new DVector3(1,1,1),mesh);
-    public GameObject object2 = new GameObject(new DVector3(0,0,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
-    public GameObject object3 = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
+    public GameObject objectSpin = new GameObject(new DVector3(2.9,4,0),new DVector3(0,0,45),new DVector3(1,1,1),mesh);
+    public GameObject objectNotSpin = new GameObject(new DVector3(0,2,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+    public GameObject objectPlane = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
     public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
     public DWorld world = OdeHelper.createWorld();
@@ -114,39 +113,36 @@ public class GravitySimulation implements Runnable{
         mesh.create();
         shader.create();
 
-        world.setGravity(0, -2, 0);
+        world.setGravity(0, -9.8, 0);
 
         DBody body1 = OdeHelper.createBody(world);
         DMass mass1 = OdeHelper.createMass();
+        mass1.setMass(1);
         mass1.setSphere(1, 0.05);
         body1.setMass(mass1);
-        body1.setPosition(object.getPosition());
-        body1.setMass(mass1);
-        object.setBody(body1);
-        object.setMass(mass1);
+        body1.setPosition(objectSpin.getPosition());
+        objectSpin.setBody(body1);
+        objectSpin.setMass(mass1);
 
         DBody body2 = OdeHelper.createBody(world);
         DMass mass2 = OdeHelper.createMass();
+        mass2.setMass(1);
         mass2.setSphere(1, 0.05);
-        body2.setMass(mass1);
-        body2.setPosition(object2.getPosition());
-        body2.setMass(mass1);
-        object2.setBody(body2);
-        object2.setMass(mass2);
+        body2.setMass(mass2);
+        body2.setPosition(objectNotSpin.getPosition());
+        objectNotSpin.setBody(body2);
+        objectNotSpin.setMass(mass2);
 
         //object.generateAABB();
         //object3.generateAABB();
-        object.generateOBB();
-        object2.generateOBB();
-        //object3.generateOBB();
+        objectSpin.generateOBB();
+        objectNotSpin.generateOBB();
+        objectPlane.generateOBB();
     }
 
     public void run() {
         init();
         while (!(window.shouldClose() || Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE))) {
-            world.step((double) 1/30);
-            object.setPosition((DVector3) object.getBody().getPosition());
-            object2.setPosition((DVector3) object2.getBody().getPosition());
             update();
             render();
 
@@ -172,21 +168,59 @@ public class GravitySimulation implements Runnable{
         window.update();
         camera.update();
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
-        object.update();
-        object2.update();
-        //object3.update();
+        objectSpin.update();
+        objectNotSpin.update();
+        objectPlane.update();
         //boolean resultAABB = object.getMyAABB().intersects(object3.getMyAABB());
-        //boolean resultOBB = object.getMyOBB().intersects(object3.getMyOBB());
-        boolean resultOBB2 = object.getMyOBB().intersects(object2.getMyOBB());
+        boolean resultOBB13 = objectSpin.getMyOBB().intersects(objectPlane.getMyOBB());
+        boolean resultOBB12 = objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB());
+        boolean resultOBB23 = objectNotSpin.getMyOBB().intersects(objectPlane.getMyOBB());
+
+        if (resultOBB13) {
+            objectSpin.getBody().setLinearVel(0, 0, 0);
+            objectSpin.getBody().setPosition(objectSpin.getPosition());
+        }
+        else {
+            objectSpin.setPosition((DVector3) objectSpin.getBody().getPosition());
+            objectSpin.getMyOBB().update();
+        }
+
+        if (resultOBB12) {
+            objectSpin.getBody().setLinearVel(0, 0, 0);
+            objectSpin.getBody().setPosition(objectSpin.getPosition());
+        }
+        else {
+            objectSpin.setPosition((DVector3) objectSpin.getBody().getPosition());
+            objectSpin.getMyOBB().update();
+            objectNotSpin.getMyOBB().update();
+        }
+
+        if (resultOBB23) {
+            objectNotSpin.getBody().setLinearVel(0, 0, 0);
+            objectNotSpin.getBody().setPosition(objectNotSpin.getPosition());
+            objectNotSpin.canJump = true;
+        }
+        else {
+            objectNotSpin.setPosition((DVector3) objectNotSpin.getBody().getPosition());
+            objectNotSpin.getMyOBB().update();
+        }
+
+        if (Input.isKeyDown(GLFW.GLFW_KEY_J) && objectNotSpin.canJump) {
+            objectNotSpin.jump();
+        }
+
         //System.out.println("AABB: " + resultAABB);
-        System.out.println("OBB: " + resultOBB2);
+        System.out.println("OBB12: " + resultOBB12);
+
+        // object 3 doesn't move
+        world.step(0.01);
     }
 
     private void render() {
         System.out.println("Rendering Game!");
-        renderer.renderMesh(object, camera);
-        renderer.renderMesh(object2, camera);
-        renderer.renderMesh(object3, camera);
+        renderer.renderMesh(objectSpin, camera);
+        renderer.renderMesh(objectNotSpin, camera);
+        renderer.renderMesh(objectPlane, camera);
         window.swapBuffers();
     }
 
@@ -194,26 +228,7 @@ public class GravitySimulation implements Runnable{
         window.destroy();
         mesh.destroy();
         shader.destroy();
-    }
-
-    public void generateBody() {
-        DWorld world = OdeHelper.createWorld();
-        DBody body = OdeHelper.createBody(world);
-        DMass mass = OdeHelper.createMass();
-
-        world.setGravity(0, -9.8, 0);
-
-        mass.setSphere(1, 0.05);
-        body.setMass(mass);
-
-        body.setPosition(0, 10, 0);
-
-        for (int i = 0; i < 1000; i++) {
-            world.step(0.01);
-            double[] position = body.getPosition().toDoubleArray();
-            System.out.println("t=" + (i * 0.01) + "s, y=" + position[1]);
-        }
-        //body.setLinearVel(0, 0, 0);
+        world.destroy();
     }
 
     public static void main(String[] args) {

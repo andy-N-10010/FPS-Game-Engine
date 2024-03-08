@@ -19,7 +19,7 @@ public class GameObject {
     private MyAABB myAABB;
     private MySphere mySphere;
     private MyOBB myOBB;
-    private double temp;
+    public boolean canJump = false;
 
     public GameObject(DVector3 position, DVector3 rotation, DVector3 scale, Mesh mesh) {
         this.position = position;
@@ -95,6 +95,10 @@ public class GameObject {
         position = new DVector3(v);
     }
 
+    public void setPosition(double x, double y, double z) {
+        position = new DVector3(x, y, z);
+    }
+
     public DVector3 getRight() {
         return right;
     }
@@ -158,5 +162,14 @@ public class GameObject {
 
     public void setMass(DMass mass) {
         this.mass = mass;
+    }
+
+    public void jump() {
+        if (canJump) {
+            this.setPosition(getPosition().get0(), getPosition().get1() + 0.03, getPosition().get2());
+            this.getBody().setPosition(getBody().getPosition().get0(), getBody().getPosition().get1() + 0.01, getBody().getPosition().get2());
+            this.getBody().addForce(0, 0.2, 0);
+            canJump = false;
+        }
     }
 }
