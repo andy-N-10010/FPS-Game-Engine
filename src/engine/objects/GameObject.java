@@ -38,9 +38,12 @@ public class GameObject {
     }
 
     public void generateOBB() {
-        System.out.println(right);
         myOBB = new MyOBB(this, new DVector3(position), new DVector3[]{right, up, forward},
                 new float[]{(float) scale.get0() / 2, (float) scale.get1() / 2, (float) scale.get2() / 2});
+    }
+
+    public void generateInitialSphereColliderWithOBB() {
+        mySphere = new MySphere(this, position, (float) Math.max(Math.max(scale.get0(), scale.get1()), scale.get2()));
     }
 
     public void generateSphere() {
@@ -166,10 +169,30 @@ public class GameObject {
 
     public void jump() {
         if (canJump) {
-            this.setPosition(getPosition().get0(), getPosition().get1() + 0.03, getPosition().get2());
-            this.getBody().setPosition(getBody().getPosition().get0(), getBody().getPosition().get1() + 0.01, getBody().getPosition().get2());
+            this.setPosition(getPosition().get0(), getPosition().get1() + 0.02, getPosition().get2());
+            this.getBody().setPosition(getBody().getPosition().get0(), getBody().getPosition().get1() + 0.02, getBody().getPosition().get2());
             this.getBody().addForce(0, 0.2, 0);
             canJump = false;
         }
+    }
+
+    public void moveLeft() {
+        this.setPosition(getPosition().get0() - 0.01, getPosition().get1(), getPosition().get2());
+        this.body.setPosition(position);
+    }
+
+    public void moveRight() {
+        this.setPosition(getPosition().get0() + 0.01, getPosition().get1(), getPosition().get2());
+        this.body.setPosition(position);
+    }
+
+    public void moveForward() {
+        this.setPosition(getPosition().get0(), getPosition().get1(), getPosition().get2() - 0.01);
+        this.body.setPosition(position);
+    }
+
+    public void moveBack() {
+        this.setPosition(getPosition().get0(), getPosition().get1(), getPosition().get2() + 0.01);
+        this.body.setPosition(position);
     }
 }

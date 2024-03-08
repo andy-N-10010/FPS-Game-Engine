@@ -48,4 +48,60 @@ public class Camera {
     public DVector3 getRotation() {
         return rotation;
     }
+
+    public void setPosition(DVector3 position) {
+        this.position = position;
+    }
+
+    public void setRotation(DVector3 rotation) {
+        this.rotation = rotation;
+    }
+
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(float moveSpeed) {
+        this.moveSpeed = moveSpeed;
+    }
+
+    public float getMouseSensitivity() {
+        return mouseSensitivity;
+    }
+
+    public void setMouseSensitivity(float mouseSensitivity) {
+        this.mouseSensitivity = mouseSensitivity;
+    }
+
+    public double getOldMouseX() {
+        return oldMouseX;
+    }
+
+    public void setOldMouseX(double oldMouseX) {
+        this.oldMouseX = oldMouseX;
+    }
+
+    public double getOldMouseY() {
+        return oldMouseY;
+    }
+
+    public void setOldMouseY(double oldMouseY) {
+        this.oldMouseY = oldMouseY;
+    }
+
+    public double getNewMouseX() {
+        return newMouseX;
+    }
+
+    public void setNewMouseX(double newMouseX) {
+        this.newMouseX = newMouseX;
+    }
+
+    public double getNewMouseY() {
+        return newMouseY;
+    }
+
+    public void setNewMouseY(double newMouseY) {
+        this.newMouseY = newMouseY;
+    }
 }

@@ -9,6 +9,7 @@ import engine.io.Window;
 import engine.objects.Bullet;
 import engine.objects.Camera;
 import engine.objects.GameObject;
+import engine.objects.PlayerCamera;
 import org.lwjgl.glfw.GLFW;
 import org.ode4j.math.DVector3;
 import org.ode4j.ode.DBody;
@@ -20,7 +21,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-public class GravitySimulation implements Runnable{
+public class PlayerSimulation implements Runnable{
     public Window window;
     public final int width = 1280, height = 760;
     public Renderer renderer;
@@ -95,7 +96,7 @@ public class GravitySimulation implements Runnable{
     public GameObject objectNotSpin = new GameObject(new DVector3(0,2,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
     public GameObject objectPlane = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
-    public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
+    public PlayerCamera camera = new PlayerCamera(objectNotSpin.getPosition(), new DVector3(0, 0, 0), objectNotSpin, objectNotSpin.getMyOBB());
     public DWorld world = OdeHelper.createWorld();
     public Queue<Bullet> bulletQueue = new LinkedList<>();
 
@@ -146,6 +147,9 @@ public class GravitySimulation implements Runnable{
         objectSpin.generateInitialSphereColliderWithOBB();
         objectNotSpin.generateInitialSphereColliderWithOBB();
         objectPlane.generateInitialSphereColliderWithOBB();
+
+        camera.setPosition(objectNotSpin.getPosition());
+        camera.setPlayerOBB(objectNotSpin.getMyOBB());
     }
 
     public void run() {
@@ -208,39 +212,18 @@ public class GravitySimulation implements Runnable{
         if (resultOBB23) {
             objectNotSpin.getBody().setLinearVel(0, 0, 0);
             objectNotSpin.getBody().setPosition(objectNotSpin.getPosition());
+            camera.setPosition(objectNotSpin.getPosition());
             objectNotSpin.canJump = true;
         }
         else {
             objectNotSpin.setPosition((DVector3) objectNotSpin.getBody().getPosition());
             objectNotSpin.getMyOBB().update();
-        }
-
-        if (Input.isKeyDown(GLFW.GLFW_KEY_J) && objectNotSpin.canJump) {
-            objectNotSpin.jump();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_UP)) {
-            objectNotSpin.moveForward();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_DOWN)) {
-            objectNotSpin.moveBack();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
-            objectNotSpin.moveLeft();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
-            objectNotSpin.moveRight();
-        }
-
-
-        for (Bullet bullet : bulletQueue) {
-            //bullet.setPosition((DVector3) bullet.getBody().getPosition());
-            bullet.getMyOBB().update();
+            camera.setPosition(objectNotSpin.getPosition());
         }
 
         //System.out.println("AABB: " + resultAABB);
-        //System.out.println("OBB12: " + resultOBB12);
+        System.out.println("OBB12: " + resultOBB12);
 
-        shoot();
         System.out.println("Camera rotation: " + camera.getRotation());
         // object 3 doesn't move
         world.step(0.01);
@@ -249,7 +232,7 @@ public class GravitySimulation implements Runnable{
     private void render() {
         System.out.println("Rendering Game!");
         renderer.renderMesh(objectSpin, camera);
-        renderer.renderMesh(objectNotSpin, camera);
+        //renderer.renderMesh(objectNotSpin, camera);
         renderer.renderMesh(objectPlane, camera);
 
         for (Bullet bullet: bulletQueue) {
@@ -266,29 +249,7 @@ public class GravitySimulation implements Runnable{
         world.destroy();
     }
 
-    private void shoot() {
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-
-            System.out.println("Bullet generated.");
-           // Bullet bullet = new Bullet(new DVector3(camera.getPosition()), new DVector3(camera.getRotation()), new DVector3(0.1, .1, .1), mesh);
-            //DBody bulletBody = OdeHelper.createBody(world);
-            //bulletBody.setPosition(bullet.getPosition());
-            //bulletBody.setQuaternion(bullet.eulerToQuaternion(bullet.getRotationEuler()));
-            //DMass bulletMass = OdeHelper.createMass();
-            //bullet.setBody(bulletBody);
-            //bullet.setMass(bulletMass);
-            /*
-            bullet.generateOBB();
-
-            //bullet.getBody().addForce(bullet.getRotationEuler().normalize());
-            if (bulletQueue.size() > 10) {
-                bulletQueue.remove();
-            }
-            bulletQueue.add(bullet);*/
-        }
-    }
-
     public static void main(String[] args) {
-        new GravitySimulation().start();
+        new PlayerSimulation().start();
     }
 }
