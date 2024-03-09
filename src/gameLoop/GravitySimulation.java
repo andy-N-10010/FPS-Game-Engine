@@ -354,11 +354,11 @@ public class GravitySimulation implements Runnable{
         } else {
 
             if (Input.isKeyDown(GLFW.GLFW_KEY_J) && objectNotSpin.canJump) {
-                objectNotSpin.jump();
                 msg.x = 0.00f;
                 msg.y = 0.2f;
                 msg.z = 0.00f;
                 client.sendTCP(msg);
+                //objectNotSpin.jump();
 
             }
             if (Input.isKeyDown(GLFW.GLFW_KEY_UP)) {
