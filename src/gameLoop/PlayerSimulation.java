@@ -1,6 +1,9 @@
 package gameLoop;
 
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import networking.Network.MovePlayer;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
@@ -9,6 +12,8 @@ import engine.io.Window;
 import engine.objects.Bullet;
 import engine.objects.GameObject;
 import engine.objects.PlayerCamera;
+import networking.Network;
+import networking.PositionClient;
 import org.lwjgl.glfw.GLFW;
 import org.ode4j.math.DVector3;
 import org.ode4j.ode.DBody;
@@ -16,6 +21,7 @@ import org.ode4j.ode.DMass;
 import org.ode4j.ode.DWorld;
 import org.ode4j.ode.OdeHelper;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -25,8 +31,81 @@ public class PlayerSimulation implements Runnable{
     public final int width = 1280, height = 760;
     public Renderer renderer;
 
-    //Client from kryonet
-    private Client client;
+
+    Client client;
+    PositionClient.UI ui;
+    String username;
+
+    public PlayerSimulation() {
+        client = new Client();
+        client.start();
+
+        Network.register(client);
+
+        client.addListener(new Listener() {
+            public void connected (Connection connection) {
+            }
+
+            public void received (Connection connection, Object object) {
+                if (object instanceof Network.SomeResponse) {
+                    Network.SomeResponse response = (Network.SomeResponse)object;
+                    System.out.println(response.text);
+                }
+
+                if (object instanceof Network.RegistrationRequired) {
+                    Network.Register register = new Network.Register();
+                    register.username = username;
+                    client.sendTCP(register);
+                }
+
+                if (object instanceof Network.AddPlayer) {
+                    Network.AddPlayer msg = (Network.AddPlayer)object;
+                    ui.addPlayer(msg.player);
+                    return;
+                }
+
+                if (object instanceof Network.UpdatePlayer) {
+                    ui.updatePlayer((Network.UpdatePlayer) object);
+                    return;
+                }
+
+                if (object instanceof Network.RemovePlayer) {
+                    Network.RemovePlayer msg = (Network.RemovePlayer)object;
+                    ui.removePlayer(msg.id);
+                    return;
+                }
+
+
+
+            }
+
+            public void disconnected (Connection connection) {
+                System.exit(0);
+            }
+        });
+
+        ui = new PositionClient.UI();
+
+        String host = ui.inputHost();
+
+
+        try {
+            client.connect(5000, host, Network.port);
+            // Server communication after connection can go here, or in Listener#connected().
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        username = ui.inputName();
+
+        Network.Login login = new Network.Login();
+        login.username = username;
+        client.sendTCP(login);
+
+
+
+    }
+
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
@@ -180,6 +259,9 @@ public class PlayerSimulation implements Runnable{
         objectSpin.update();
         objectNotSpin.update();
         objectPlane.update();
+
+        MovePlayer msg = new MovePlayer();
+
         //boolean resultAABB = object.getMyAABB().intersects(object3.getMyAABB());
 
         // if the initial collision detection is false, we don't need to care about OBB's collision detection calculation
@@ -224,30 +306,65 @@ public class PlayerSimulation implements Runnable{
         camera.update();
         if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
             camera.moveLeft();
+            msg.x = 0.05f;
+            msg.y = 0;
+            msg.z = -0.05f;
+            client.sendTCP(msg);
+
             if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
                 camera.moveRight();
+                msg.x = -0.05f;
+                msg.y = 0;
+                msg.z = 0.05f;
+                client.sendTCP(msg);
             }
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
             camera.moveRight();
+            msg.x = -0.05f;
+            msg.y = 0;
+            msg.z = 0.05f;
+            client.sendTCP(msg);
+
             if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
                 camera.moveLeft();
+                msg.x = 0.05f;
+                msg.y = 0;
+                msg.z = -0.05f;
+                client.sendTCP(msg);
             }
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
             camera.moveForward();
+            msg.x = -0.05f;
+            msg.y = 0;
+            msg.z = -0.05f;
+            client.sendTCP(msg);
             if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
                 camera.moveBack();
+                msg.x = 0.05f;
+                msg.y = 0;
+                msg.z = 0.05f;
+                client.sendTCP(msg);
             }
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
             camera.moveBack();
+            msg.x = 0.05f;
+            msg.y = 0;
+            msg.z = 0.05f;
+            client.sendTCP(msg);
             if (objectSpin.getMyOBB().intersects(objectNotSpin.getMyOBB())) {
                 camera.moveForward();
+                msg.x = -0.05f;
+                msg.y = 0;
+                msg.z = -0.05f;
+                client.sendTCP(msg);
             }
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
             camera.getPlayerObj().jump();
+
         }
 
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());

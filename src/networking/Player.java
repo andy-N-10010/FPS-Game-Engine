@@ -11,7 +11,8 @@ public class Player {
 
     public String username;
 
-    public int id,x,y,z;
+    public int id;
+    public float x,y,z;
 
     private float pastTime;
 

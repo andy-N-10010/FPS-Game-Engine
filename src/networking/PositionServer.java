@@ -12,6 +12,8 @@ import java.util.HashSet;
 
 public class PositionServer {
     private Server server;
+
+    int IDcounter;
     HashSet<Player> loggedIn = new HashSet<>();
 
     public PositionServer () throws IOException {
@@ -28,6 +30,8 @@ public class PositionServer {
 
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
+
+                IDcounter += 1;
 
                 if (object instanceof Network.SomeRequest) {
 
@@ -94,7 +98,7 @@ public class PositionServer {
 
                     Network.MovePlayer msg = (Network.MovePlayer)object;
 
-                    if (Math.abs(msg.x) != 1 && Math.abs(msg.y) != 1 && Math.abs(msg.z) != 1) return;
+                    //if (Math.abs(msg.x) != 1 && Math.abs(msg.y) != 1 && Math.abs(msg.z) != 1) return;
 
                     player.x += msg.x;
                     player.y += msg.y;
@@ -177,9 +181,9 @@ public class PositionServer {
         try {
             output = new DataOutputStream(new FileOutputStream(file));
             output.writeInt(player.id);
-            output.writeInt(player.x);
-            output.writeInt(player.y);
-            output.writeInt(player.z);
+            output.writeFloat(player.x);
+            output.writeFloat(player.y);
+            output.writeFloat(player.z);
             return true;
 
         }catch (IOException ex) {
@@ -198,6 +202,7 @@ public class PositionServer {
     Player loadPlayer(String name) {
         Player player = new Player();
         player.username = name;
+        player.id = IDcounter;
         player.x = 0;
         player.y = 0;
         player.z = 1;

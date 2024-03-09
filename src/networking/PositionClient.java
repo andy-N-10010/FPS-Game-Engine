@@ -151,7 +151,7 @@ public class PositionClient {
 
     }
 
-    static class UI {
+    public static class UI {
         HashMap<Integer,Player> players = new HashMap<>();
 
         public String inputHost() {

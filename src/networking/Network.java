@@ -19,6 +19,7 @@ public class Network {
         kryo.register(Register.class);
         kryo.register(RemovePlayer.class);
         kryo.register(Player.class);
+        kryo.register(UpdatePlayer.class);
         kryo.register(org.ode4j.math.DVector3.class);
 
     }
@@ -31,11 +32,13 @@ public class Network {
     }
 
     static public class UpdateGameObjects {
-        public int id, x, y, z;
+        public int id;
+        public float x,y,z;
     }
 
     static public class UpdatePlayer {
-        public int id,x,y,z;
+        public int id;
+        public float x, y, z;
     }
 
     static public class AddPlayer {
@@ -43,7 +46,7 @@ public class Network {
     }
 
     static public class MovePlayer {
-        public int x, y, z;
+        public float x, y, z;
     }
 
     static public class RemovePlayer {
