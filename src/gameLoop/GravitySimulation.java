@@ -1,6 +1,8 @@
 package gameLoop;
 
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
@@ -9,6 +11,8 @@ import engine.io.Window;
 import engine.objects.Bullet;
 import engine.objects.Camera;
 import engine.objects.GameObject;
+import networking.Network;
+import networking.PositionClient;
 import org.lwjgl.glfw.GLFW;
 import org.ode4j.math.DVector3;
 import org.ode4j.ode.DBody;
@@ -16,6 +20,8 @@ import org.ode4j.ode.DMass;
 import org.ode4j.ode.DWorld;
 import org.ode4j.ode.OdeHelper;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -25,8 +31,115 @@ public class GravitySimulation implements Runnable{
     public final int width = 1280, height = 760;
     public Renderer renderer;
 
-    //Client from kryonet
-    private Client client;
+    Client client;
+    PositionClient.UI ui;
+    String username;
+
+    boolean jumped = false;
+
+    HashMap<Integer, networking.GameObject> objects = new HashMap<>();
+
+    int objectCounter = 0;
+
+    public GravitySimulation() {
+        client = new Client();
+        client.start();
+
+        Network.register(client);
+
+        client.addListener(new Listener() {
+            public void connected (Connection connection) {
+            }
+
+            public void received (Connection connection, Object object) {
+                if (object instanceof Network.SomeResponse) {
+                    Network.SomeResponse response = (Network.SomeResponse)object;
+                    System.out.println(response.text);
+                }
+
+                if (object instanceof Network.RegistrationRequired) {
+                    Network.Register register = new Network.Register();
+                    register.username = username;
+                    client.sendTCP(register);
+                }
+
+                if (object instanceof Network.AddPlayer) {
+                    Network.AddPlayer msg = (Network.AddPlayer)object;
+                    ui.addPlayer(msg.player);
+                    return;
+                }
+
+                if (object instanceof Network.AddObject)  {
+                    Network.AddObject msg = (Network.AddObject)object;
+                    ui.addObject(msg.object);
+                    return;
+                }
+
+                if (object instanceof Network.UpdatePlayer) {
+                    ui.updatePlayer((Network.UpdatePlayer) object);
+                    return;
+                }
+
+                if (object instanceof Network.UpdateGameObject) {
+
+                    jumped = true;
+
+//                    ui.updateGameObject((Network.UpdateGameObject) object);
+//                    return;
+
+                }
+
+
+                if (object instanceof Network.RemovePlayer) {
+                    Network.RemovePlayer msg = (Network.RemovePlayer)object;
+                    ui.removePlayer(msg.id);
+                    return;
+                }
+
+
+            }
+
+            public void disconnected (Connection connection) {
+                System.exit(0);
+            }
+        });
+
+        ui = new PositionClient.UI();
+
+        String host = ui.inputHost();
+
+
+        try {
+            client.connect(5000, host, Network.port);
+            // Server communication after connection can go here, or in Listener#connected().
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        username = ui.inputName();
+
+        Network.Login login = new Network.Login();
+        login.username = username;
+        client.sendTCP(login);
+
+
+        //Network.AddObject msg = (Network.AddObject)object;
+        //ui.addObject(msg.object);
+
+        networking.GameObject gameObject = new networking.GameObject();
+
+        objectCounter += 1;
+
+        gameObject.id = objectCounter;
+        gameObject.name = "objectNotSpin";
+        gameObject.x = 0;
+        gameObject.y = 2;
+        gameObject.z = 0;
+
+        ui.addObject(gameObject);
+
+
+    }
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
@@ -93,10 +206,23 @@ public class GravitySimulation implements Runnable{
 
     public GameObject objectSpin = new GameObject(new DVector3(2.9,4,0),new DVector3(0,0,45),new DVector3(1,1,1),mesh);
 
-    //Player object
+
     public GameObject objectNotSpin = new GameObject(new DVector3(0,2,0),new DVector3(0,0,0),new DVector3(1,1,1),mesh);
+
+
+
+    //networking.GameObject networkObject = new networking.GameObject();
+    //GravitySimulation.addObject(networkObject);
+
+    //Network.AddObject();
+
+    //    Network.AddPlayer msg = (Network.AddPlayer)object;
+//                        ui.addPlayer(msg.player);
+//                        return;
+
     public GameObject objectPlane = new GameObject(new DVector3(0,-1,0),new DVector3(0,0,0),new DVector3(20,1,20),mesh);
 
+    //Player object
     public Camera camera = new Camera(new DVector3(0, 0, 1), new DVector3(0, 0, 0));
     public DWorld world = OdeHelper.createWorld();
     public Queue<Bullet> bulletQueue = new LinkedList<>();
@@ -175,9 +301,12 @@ public class GravitySimulation implements Runnable{
     private void update() {
         //System.out.println("Updating Game!");
 
+        Network.MoveObject msg = new Network.MoveObject();
+
         window.update();
         camera.update();
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) System.out.println("x: "+ Input.getScrollX() + ", y:" + Input.getScrollY());
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT))
+            System.out.println("x: " + Input.getScrollX() + ", y:" + Input.getScrollY());
         objectSpin.update();
         objectNotSpin.update();
         objectPlane.update();
@@ -191,8 +320,7 @@ public class GravitySimulation implements Runnable{
         if (resultOBB13) {
             objectSpin.getBody().setLinearVel(0, 0, 0);
             objectSpin.getBody().setPosition(objectSpin.getPosition());
-        }
-        else {
+        } else {
             objectSpin.setPosition((DVector3) objectSpin.getBody().getPosition());
             objectSpin.getMyOBB().update();
         }
@@ -200,8 +328,7 @@ public class GravitySimulation implements Runnable{
         if (resultOBB12) {
             objectSpin.getBody().setLinearVel(0, 0, 0);
             objectSpin.getBody().setPosition(objectSpin.getPosition());
-        }
-        else {
+        } else {
             objectSpin.setPosition((DVector3) objectSpin.getBody().getPosition());
             objectSpin.getMyOBB().update();
             objectNotSpin.getMyOBB().update();
@@ -211,41 +338,56 @@ public class GravitySimulation implements Runnable{
             objectNotSpin.getBody().setLinearVel(0, 0, 0);
             objectNotSpin.getBody().setPosition(objectNotSpin.getPosition());
             objectNotSpin.canJump = true;
-        }
-        else {
+        } else {
             objectNotSpin.setPosition((DVector3) objectNotSpin.getBody().getPosition());
             objectNotSpin.getMyOBB().update();
         }
 
-        if (Input.isKeyDown(GLFW.GLFW_KEY_J) && objectNotSpin.canJump) {
+        if (jumped) {
+
             objectNotSpin.jump();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_UP)) {
-            objectNotSpin.moveForward();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_DOWN)) {
-            objectNotSpin.moveBack();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
-            objectNotSpin.moveLeft();
-        }
-        if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
-            objectNotSpin.moveRight();
-        }
+
+            jumped = false;
 
 
-        for (Bullet bullet : bulletQueue) {
-            //bullet.setPosition((DVector3) bullet.getBody().getPosition());
-            bullet.getMyOBB().update();
+
+        } else {
+
+            if (Input.isKeyDown(GLFW.GLFW_KEY_J) && objectNotSpin.canJump) {
+                objectNotSpin.jump();
+                msg.x = 0.00f;
+                msg.y = 0.2f;
+                msg.z = 0.00f;
+                client.sendTCP(msg);
+
+            }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_UP)) {
+                objectNotSpin.moveForward();
+            }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_DOWN)) {
+                objectNotSpin.moveBack();
+            }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
+                objectNotSpin.moveLeft();
+            }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
+                objectNotSpin.moveRight();
+            }
+
+
+            for (Bullet bullet : bulletQueue) {
+                //bullet.setPosition((DVector3) bullet.getBody().getPosition());
+                bullet.getMyOBB().update();
+            }
+
+            //System.out.println("AABB: " + resultAABB);
+            //System.out.println("OBB12: " + resultOBB12);
+
+            shoot();
+            //System.out.println("Camera rotation: " + camera.getRotation());
+            // object 3 doesn't move
+            world.step(0.01);
         }
-
-        //System.out.println("AABB: " + resultAABB);
-        //System.out.println("OBB12: " + resultOBB12);
-
-        shoot();
-        //System.out.println("Camera rotation: " + camera.getRotation());
-        // object 3 doesn't move
-        world.step(0.01);
     }
 
     private void render() {
@@ -266,6 +408,15 @@ public class GravitySimulation implements Runnable{
         mesh.destroy();
         shader.destroy();
         world.destroy();
+    }
+
+    public void addObject(networking.GameObject object) {
+        objects.put(object.id, object);
+
+        System.out.println(object.name + "added at "+ object.x + ", "+ object.y + ", "+object.z);
+
+
+
     }
 
     private void shoot() {

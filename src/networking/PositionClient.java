@@ -154,6 +154,8 @@ public class PositionClient {
     public static class UI {
         HashMap<Integer,Player> players = new HashMap<>();
 
+        HashMap<Integer,GameObject> objects = new HashMap<>();
+
         public String inputHost() {
             String input = (String)JOptionPane.showInputDialog(null, "Host:","Connect to server", JOptionPane.QUESTION_MESSAGE,
                     null,null,"localhost");
@@ -173,6 +175,15 @@ public class PositionClient {
             System.out.println(player.username + " added at "+ player.x + ", "+player.y + ", "+player.z);
         }
 
+        public void addObject(GameObject object) {
+            objects.put(object.id, object);
+
+            System.out.println(object.name + " added at "+ object.x + ", "+ object.y + ", "+object.z);
+
+
+
+        }
+
         public void updatePlayer(Network.UpdatePlayer msg) {
             Player player = players.get(msg.id);
             if (player == null) return;
@@ -182,6 +193,17 @@ public class PositionClient {
             System.out.println(player.username + " moved to "+ player.x + ", "+player.y +", "+player.z);
 
         }
+
+        public void updateGameObject(Network.UpdateGameObject msg) {
+            GameObject object = objects.get(msg.id);
+            if (object == null) return;
+            object.x = msg.x;
+            object.y = msg.y;
+            object.z = msg.z;
+            System.out.println(object.name + " moved to "+ object.x + ", "+object.y +", "+object.z);
+
+        }
+
 
         public void removePlayer (int id) {
             Player player = players.remove(id);

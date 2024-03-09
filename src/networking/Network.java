@@ -11,7 +11,7 @@ public class Network {
         Kryo kryo = endPoint.getKryo();
         kryo.register(SomeRequest.class);
         kryo.register(SomeResponse.class);
-        kryo.register(UpdateGameObjects.class);
+        kryo.register(UpdateGameObject.class);
         kryo.register(AddPlayer.class);
         kryo.register(MovePlayer.class);
         kryo.register(Login.class);
@@ -21,6 +21,9 @@ public class Network {
         kryo.register(Player.class);
         kryo.register(UpdatePlayer.class);
         kryo.register(org.ode4j.math.DVector3.class);
+        kryo.register(MoveObject.class);
+        kryo.register(detectObject.class);
+        kryo.register(UpdateObject.class);
 
     }
 
@@ -31,7 +34,7 @@ public class Network {
         public String text;
     }
 
-    static public class UpdateGameObjects {
+    static public class UpdateGameObject {
         public int id;
         public float x,y,z;
     }
@@ -41,8 +44,24 @@ public class Network {
         public float x, y, z;
     }
 
+    static public class UpdateObject {
+        public int id;
+        public float x, y, z;
+    }
+
+
     static public class AddPlayer {
         public Player player;
+    }
+
+
+    static public class AddObject {
+
+        public GameObject object;
+    }
+
+    static public class MoveObject {
+        public float x, y, z;
     }
 
     static public class MovePlayer {
@@ -56,6 +75,10 @@ public class Network {
 
     static public class Login {
         public String username;
+    }
+
+    static public class detectObject {
+        public String name;
     }
 
     static public class RegistrationRequired {

@@ -13,8 +13,12 @@ import java.util.HashSet;
 public class PositionServer {
     private Server server;
 
-    int IDcounter;
+    int IDPlayerCounter;
+
+    int IDObjectCounter;
     HashSet<Player> loggedIn = new HashSet<>();
+
+    HashSet<GameObject> gameObjects = new HashSet<>();
 
     public PositionServer () throws IOException {
         server = new Server() {
@@ -31,7 +35,9 @@ public class PositionServer {
         server.addListener(new Listener() {
             public void received (Connection connection, Object object) {
 
-                IDcounter += 1;
+                //IDcounter += 1;
+
+
 
                 if (object instanceof Network.SomeRequest) {
 
@@ -47,6 +53,10 @@ public class PositionServer {
                 PlayerConnection connect = (PlayerConnection)connection;
 
                 Player player = connect.player;
+//
+//                GameObjectConnection connect2 = (GameObjectConnection)connection;
+//
+//                GameObject gameObject = connect2.gameObject;
 
                 if (object instanceof Network.Login) {
 
@@ -65,6 +75,32 @@ public class PositionServer {
                         return;
 
                 }
+
+//                if (object instanceof Network.detectObject) {
+//
+//                    IDObjectCounter += 1;
+//
+//                    if (gameObject != null) return;
+//
+//                    String name = ((Network.detectObject)object).name;
+
+                    //gameObject = loadPlayer(name);
+
+                    //gameObject = loadObject(name);
+
+
+
+//                    if (player == null) {
+//                        connect.sendTCP(new Network.RegistrationRequired());
+//                        return;
+//                    }
+//
+//                    loggedIn(connect,player);
+//                    return;
+
+//                }
+
+
 
                 if (object instanceof Network.Register) {
 
@@ -119,6 +155,45 @@ public class PositionServer {
 
                 }
 
+                if (object instanceof Network.MoveObject) {
+
+                    //System.out.println("Reached server");
+
+                    Network.UpdateGameObject update = new Network.UpdateGameObject();
+                    update.x = 0;
+                    update.y = 0.2f;
+                    update.z = 0;
+                    server.sendToAllTCP(update);
+                    return;
+
+
+
+//
+//                    if (gameObject == null) return;
+//
+//                    Network.MoveObject msg = (Network.MoveObject)object;
+//
+//                    //if (Math.abs(msg.x) != 1 && Math.abs(msg.y) != 1 && Math.abs(msg.z) != 1) return;
+//
+//                    gameObject.x += msg.x;
+//                    gameObject.y += msg.y;
+//                    gameObject.z += msg.z;
+////                    if (!saveObject (object)) {
+////                        connect.close();
+////                        return;
+////                    }
+//
+//                    Network.UpdateGameObject update = new Network.UpdateGameObject();
+//                    update.id = gameObject.id;
+//                    update.x = gameObject.x;
+//                    update.y = gameObject.y;
+//                    update.z = gameObject.z;
+//                    server.sendToAllTCP(update);
+//                    return;
+
+
+                }
+
             }
             private boolean isValid (String value) {
                 if (value == null) return false;
@@ -166,6 +241,26 @@ public class PositionServer {
 
     }
 
+    void gameObjectsDetected (GameObjectConnection c, GameObject gameObject) {
+        c.gameObject = gameObject;
+
+        for (GameObject other : gameObjects) {
+            Network.AddObject addObject = new Network.AddObject();
+            addObject.object = other;
+            c.sendTCP(addObject);
+        }
+
+        gameObjects.add(gameObject);
+
+        //Network.AddPlayer addPlayer = new Network.AddPlayer();
+        Network.AddObject addObject = new Network.AddObject();
+        //addPlayer.player = player;
+        addObject.object = gameObject;
+        server.sendToAllTCP(gameObject);
+        //server.sendToAllTCP(addPlayer);
+
+    }
+
     boolean savePlayer (Player player) {
         File file = new File("players", player.username.toLowerCase());
         file.getParentFile().mkdirs();
@@ -198,11 +293,34 @@ public class PositionServer {
         }
     }
 
+    GameObject loadObject(String name, float x, float y, float z) {
+//        Player player = new Player();
+//        player.username = name;
+//        player.id = IDcounter;
+//        player.x = 0;
+//        player.y = 0;
+//        player.z = 1;
+//        return player;
+
+        GameObject gameObject = new GameObject();
+        gameObject.name =name;
+        gameObject.id = IDObjectCounter;
+        gameObject.x = x;
+        gameObject.y = y;
+        gameObject.z = z;
+
+        return gameObject;
+
+    }
+
 
     Player loadPlayer(String name) {
+
+        IDPlayerCounter += 1;
+
         Player player = new Player();
         player.username = name;
-        player.id = IDcounter;
+        player.id = IDPlayerCounter;
         player.x = 0;
         player.y = 0;
         player.z = 1;
@@ -239,6 +357,11 @@ public class PositionServer {
     static class PlayerConnection extends Connection {
         public Player player;
     }
+
+    static class GameObjectConnection extends Connection {
+        public GameObject gameObject;
+    }
+
 
     public static void main (String[] args) throws IOException {
         //Log.set(Log.LEVEL_DEBUG);
