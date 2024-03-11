@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL30;
 public class Renderer {
     private Shader shader;
     private Window window;
+    Matrix4f localTransform = Matrix4f.identity();
 
     //Test
     //Player p = new Player();
@@ -27,6 +28,7 @@ public class Renderer {
         GL30.glEnableVertexAttribArray(1);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIBO());
         shader.bind();
+        shader.setUniform("local",localTransform);
         shader.setUniform("model", Matrix4f.transform(object.getPosition(), object.getRotationEuler(), object.getScale()));
         shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));
         shader.setUniform("projection", window.getProjectionMatrix());
@@ -37,5 +39,9 @@ public class Renderer {
         GL30.glDisableVertexAttribArray(1);
         GL30.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
+    }
+
+    public void setLocalTransform(Matrix4f transform){
+        localTransform = transform;
     }
 }

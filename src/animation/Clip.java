@@ -2,14 +2,24 @@ package animation;
 
 import java.util.List;
 import animation.JointPose;
+import engine.math.Matrix4f;
 
 public class Clip {
-    List<JointPose> keyPoses;
-    List<Double> times;
-    double globalTimeAtStart;
-    double localTime;
-    double timeSpeed;
-    JointPose update(double t) {
-        return null;
+    //Animation, List of Key Frames and the total time
+
+    float length;
+    List<JointPose> keyFrames;
+
+    public Clip(float lengthSec, List<JointPose> frames){
+        this.keyFrames = frames;
+        this.length = lengthSec;
     }
+
+    public float getLength(){
+        return length;
+    }
+    public List<JointPose> getKeyFrames(){
+        return keyFrames;
+    }
+
 }

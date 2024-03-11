@@ -137,4 +137,79 @@ public class Matrix4f {
     public float[] getAll() {
         return elements;
     }
+
+    public static String toString(Matrix4f dest) {
+        float m00 = dest.get(0,0);
+        float m11 = dest.get(1,1);
+        float m01 = dest.get(0,1);
+        float m10 = dest.get(1,0);
+        float m12 = dest.get(1,2);
+        float m02 = dest.get(0,2);
+        float m13 = dest.get(1,3);
+        float m03 = dest.get(0,3);
+        float m20 = dest.get(2,0);
+        float m31 = dest.get(3,1);
+        float m21 = dest.get(2,1);
+        float m30 = dest.get(3,0);
+        float m32 = dest.get(3,2);
+        float m22 = dest.get(2,2);
+        float m33 = dest.get(3,3);
+        float m23 = dest.get(2,3);
+        return "" + m00 + " " + m10 + " " + m20 + " " + m30 + "\n"  + m01 + " " + m11 + " " + m21 + " " + m31 + "\n" + m02 + " " + m12 + " " + m22 + " " + m32 + "\n" + m03 + " " + m13 + " " + m23 + " " + m33 + "\n";
+    }
+
+    public Matrix4f invert(Matrix4f dest) {
+        float m00 = dest.get(0,0);
+        float m11 = dest.get(1,1);
+        float m01 = dest.get(0,1);
+        float m10 = dest.get(1,0);
+        float m12 = dest.get(1,2);
+        float m02 = dest.get(0,2);
+        float m13 = dest.get(1,3);
+        float m03 = dest.get(0,3);
+        float m20 = dest.get(2,0);
+        float m31 = dest.get(3,1);
+        float m21 = dest.get(2,1);
+        float m30 = dest.get(3,0);
+        float m32 = dest.get(3,2);
+        float m22 = dest.get(2,2);
+        float m33 = dest.get(3,3);
+        float m23 = dest.get(2,3);
+
+        float a = m00 * m11 - m01 * m10;
+        float b = m00 * m12 - m02 * m10;
+        float c = m00 * m13 - m03 * m10;
+        float d = m01 * m12 - m02 * m11;
+        float e = m01 * m13 - m03 * m11;
+        float f = m02 * m13 - m03 * m12;
+        float g = m20 * m31 - m21 * m30;
+        float h = m20 * m32 - m22 * m30;
+        float i = m20 * m33 - m23 * m30;
+        float j = m21 * m32 - m22 * m31;
+        float k = m21 * m33 - m23 * m31;
+        float l = m22 * m33 - m23 * m32;
+        float det = a * l - b * k + c * j + d * i - e * h + f * g;
+        det = 1.0f / det;
+        Matrix4f result = new Matrix4f();
+        result.set(0,0,( m11 * l - m12 * k + m13 * j) * det);
+        result.set(0,1,(-m01 * l + m02 * k - m03 * j) * det);
+        result.set(0,2, (m31 * f - m32 * e + m33 * d) * det);
+        result.set(0,3,(-m21 * f + m22 * e - m23 * d) * det);
+        result.set(1,0,(-m10 * l + m12 * i - m13 * h) * det);
+        result.set(1,1, (m00 * l - m02 * i + m03 * h) * det);
+        result.set(1,2,(-m30 * f + m32 * c - m33 * b) * det);
+        result.set(1,3, (m20 * f - m22 * c + m23 * b) * det);
+        result.set(2,0, (m10 * k - m11 * i + m13 * g) * det);
+        result.set(2,1,(-m00 * k + m01 * i - m03 * g) * det);
+        result.set(2,2, (m30 * e - m31 * c + m33 * a) * det);
+        result.set(2,3,(-m20 * e + m21 * c - m23 * a) * det);
+        result.set(3,0,(-m10 * j + m11 * h - m12 * g) * det);
+        result.set(3,1,( m00 * j - m01 * h + m02 * g) * det);
+        result.set(3,2,(-m30 * d + m31 * b - m32 * a) * det);
+        result.set(3,3,( m20 * d - m21 * b + m22 * a) * det);
+        return result;
+    }
+
+
+
 }

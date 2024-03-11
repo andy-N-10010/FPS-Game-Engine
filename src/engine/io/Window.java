@@ -23,6 +23,7 @@ public class Window {
     private int[] windowPosX = new int[1], windowPosY = new int[1];
     private Matrix4f projection;
 
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
@@ -86,6 +87,7 @@ public class Window {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GLFW.glfwPollEvents();
         frames++;
+
         if (System.currentTimeMillis() > time + 1000) {
             GLFW.glfwSetWindowTitle(window, title + " | FPS: " + frames);
             time = System.currentTimeMillis();
