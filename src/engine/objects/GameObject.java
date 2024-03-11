@@ -10,6 +10,9 @@ import org.ode4j.ode.DMass;
 
 public class GameObject {
     private DVector3 position, rotationEuler, scale;
+    private DVector3 translationPose = new DVector3(0,0,0);
+    private DVector3 rotationPose = new DVector3(0,0,0);
+    private DVector3 scalePose = new DVector3(0,0,0);
     private DQuaternion rotationQuaternion;
     private DVector3 right, up, forward;
     private Mesh mesh;
@@ -102,6 +105,26 @@ public class GameObject {
         position = new DVector3(x, y, z);
     }
 
+
+    public void setRotationPose(DVector3 r) {
+        rotationPose = r;
+    }
+    public void setScalePose(DVector3 s) {
+        scalePose = s;
+    }
+    public void setTranslation(DVector3 t) {
+        translationPose = t;
+    }
+    public DVector3 getRotationPose() {
+        return rotationPose;
+    }
+    public DVector3 getScalePose() {
+        return scalePose;
+    }
+    public DVector3 getTranslationPose() {
+        return translationPose;
+    }
+
     public DVector3 getRight() {
         return right;
     }
@@ -167,6 +190,7 @@ public class GameObject {
         this.mass = mass;
     }
 
+
     public void jump() {
         if (canJump) {
             this.setPosition(getPosition().get0(), getPosition().get1() + 0.02, getPosition().get2());
@@ -196,4 +220,5 @@ public class GameObject {
         this.setPosition(getPosition().get0(), getPosition().get1(), getPosition().get2() + 0.01);
         this.body.setPosition(position);
     }
+
 }
