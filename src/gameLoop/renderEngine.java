@@ -31,7 +31,6 @@ public class renderEngine implements Runnable{
     public Renderer renderer;
 
     //Client from kryonet
-    private Client client;
 
     public Shader shader;
     public Mesh mesh = new Mesh(new Vertex[] {
@@ -230,9 +229,6 @@ public class renderEngine implements Runnable{
         close();
     }
 
-    public Client getClient() {
-        return client;
-    }
 
     private void tempChangeBackground() {
         window.setBackgroundColor(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
